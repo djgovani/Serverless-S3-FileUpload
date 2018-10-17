@@ -1,0 +1,43 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: fileUpload # NOTE: update this with your service name
+
+plugins:
+  - serverless-offline
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  environment:
+    S3_BucketName: Your_Bucket_Name
+  stage: dev
+  region: Your_Region
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::${self:provider.environment.S3_BucketName}/*"
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - s3:${self:provider.environment.S3_BucketName}
+      - http:
+          path: /uploadImage
+          method: post
+          cors: true
